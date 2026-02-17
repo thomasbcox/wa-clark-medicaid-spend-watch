@@ -50,29 +50,36 @@ def get_flagged_providers(limit: int = 20):
         ORDER BY flag_count DESC, total_spend DESC
         LIMIT ?
     """
-    results = conn.execute(query, [limit]).df().to_dict(orient="records")
+    df = conn.execute(query, [limit]).df()
+    # Sanitize NaN values for JSON compliance
+    df = df.fillna(0)
+    results = df.to_dict(orient="records")
     conn.close()
     return results
 
 @app.get("/api/provider/{npi}")
 def get_provider_detail(npi: str):
     conn = get_db()
-    provider = conn.execute("SELECT * FROM providers WHERE npi = ?", [npi]).df().to_dict(orient="records")
-    if not provider:
+    provider_df = conn.execute("SELECT * FROM providers WHERE npi = ?", [npi]).df()
+    if provider_df.empty:
         conn.close()
-        raise HTTPException(status_code=44, detail="Provider not found")
+        raise HTTPException(status_code=404, detail="Provider not found")
     
-    flags = conn.execute("SELECT * FROM risk_flags WHERE npi = ?", [npi]).df().to_dict(orient="records")
+    # Sanitize NaN
+    provider_df = provider_df.fillna(0)
+    provider = provider_df.to_dict(orient="records")[0]
+    
+    flags = conn.execute("SELECT * FROM risk_flags WHERE npi = ?", [npi]).df().fillna(0).to_dict(orient="records")
     spend_trend = conn.execute("""
         SELECT period, SUM(total_paid) as spend 
         FROM medicaid_spend 
         WHERE billing_npi = ? 
         GROUP BY 1 ORDER BY 1
-    """, [npi]).df().to_dict(orient="records")
+    """, [npi]).df().fillna(0).to_dict(orient="records")
     
     conn.close()
     return {
-        "details": provider[0],
+        "details": provider,
         "flags": flags,
         "spend_trend": spend_trend
     }

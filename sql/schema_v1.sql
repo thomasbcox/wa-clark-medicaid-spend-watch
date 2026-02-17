@@ -11,6 +11,13 @@ CREATE TABLE IF NOT EXISTS providers (
     postal_code VARCHAR,
     is_excluded BOOLEAN DEFAULT FALSE, -- OIG LEIE flag
     risk_score DOUBLE DEFAULT 0.0,
+    auth_official_name VARCHAR,
+    auth_official_title VARCHAR,
+    auth_official_phone VARCHAR,
+    mailing_address VARCHAR,
+    mailing_city VARCHAR,
+    mailing_state VARCHAR,
+    mailing_zip VARCHAR,
     last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

@@ -47,30 +47,27 @@ We center the model on the **Provider (NPI)** and **Program/Period**.
 ### Key Tables
 
 #### `providers`
-- `npi` (PK): BIGINT
+- `npi` (PK): VARCHAR (Supports legacy IDs & NPPES NPIs)
 - `name`: VARCHAR
 - `taxonomy_desc`: VARCHAR
-- `is_org`: BOOLEAN
-- `city`: VARCHAR
-- `state`: VARCHAR
-- `postal_code`: VARCHAR
 - `is_excluded`: BOOLEAN (Join key for LEIE)
+- `risk_score`: DOUBLE (Global ML anomaly score)
 
 #### `medicaid_spend`
-- `id` (PK): UUID
-- `billing_npi` (FK): BIGINT
-- `servicing_npi` (FK): BIGINT
+- `billing_npi` (FK): VARCHAR
+- `servicing_npi` (FK): VARCHAR
 - `hcpcs_code`: VARCHAR
 - `period`: DATE (YYYY-MM-01)
 - `total_paid`: DOUBLE
 - `total_claims`: INTEGER
 - `unique_beneficiaries`: INTEGER
 
-#### `risk_scores`
-- `npi` (FK): BIGINT
-- `score`: DOUBLE (0-1)
-- `reasons`: JSON (Array of strings)
-- `detected_date`: TIMESTAMP
+#### `risk_flags`
+- `npi` (FK): VARCHAR
+- `flag_type`: VARCHAR (e.g., 'PRICE_Z_SCORE_OUTLIER', 'SUDDEN_UTILIZATION')
+- `flag_score`: DOUBLE
+- `reason`: VARCHAR (Explainer)
+- `detected_at`: TIMESTAMP
 
 ## 4. Technology Choices
 

@@ -95,6 +95,43 @@ async function showProvider(npi) {
                     </div>
                 </div>
 
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                    <div class="bg-indigo-50 p-6 rounded-xl border border-indigo-100">
+                        <h3 class="font-bold text-indigo-900 mb-4 flex items-center">🏢 Corporate Leadership & Official</h3>
+                        ${p.auth_official_name ? `
+                            <div class="space-y-3">
+                                <div>
+                                    <div class="text-[10px] font-bold text-indigo-400 uppercase">Authorized Official</div>
+                                    <div class="text-indigo-900 font-semibold">${p.auth_official_name}</div>
+                                    <div class="text-xs text-indigo-600">${p.auth_official_title || 'Title Unknown'}</div>
+                                </div>
+                                ${p.auth_official_phone ? `
+                                <div>
+                                    <div class="text-[10px] font-bold text-indigo-400 uppercase">Contact</div>
+                                    <div class="text-xs text-indigo-900">${p.auth_official_phone}</div>
+                                </div>` : ''}
+                                ${p.mailing_address ? `
+                                <div>
+                                    <div class="text-[10px] font-bold text-indigo-400 uppercase">Business Mailing Address</div>
+                                    <div class="text-xs text-indigo-900">${p.mailing_address}<br>${p.mailing_city}, ${p.mailing_state} ${p.mailing_zip}</div>
+                                </div>` : ''}
+                            </div>
+                        ` : '<p class="text-sm text-indigo-400 italic">No official details found in registry.</p>'}
+                    </div>
+
+                    <div class="bg-slate-50 p-6 rounded-xl border border-slate-200">
+                        <h3 class="font-bold text-slate-800 mb-4 flex items-center">🔗 Research Links</h3>
+                        <div class="space-y-2">
+                             <a href="https://ccfs.sos.wa.gov/#/search" target="_blank" class="block w-full text-center py-2 bg-white border border-slate-300 rounded-lg text-sm text-slate-700 hover:bg-slate-50 transition-colors">
+                                📋 WA SOS Business Search
+                            </a>
+                            <a href="https://npiregistry.cms.hhs.gov/registry-search-results?number=${p.npi}" target="_blank" class="block w-full text-center py-2 bg-white border border-slate-300 rounded-lg text-sm text-slate-700 hover:bg-slate-50 transition-colors">
+                                🏛 Full NPPES Record
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="bg-slate-50 p-6 rounded-xl border border-slate-200">
                     <h3 class="font-bold text-slate-800 mb-2">Ethics & Stewardship Note</h3>
                     <p class="text-xs text-slate-500 italic leading-relaxed">

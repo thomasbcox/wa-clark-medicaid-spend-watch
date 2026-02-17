@@ -33,11 +33,27 @@ Always work within the activated virtual environment:
 source .venv/bin/activate
 ```
 
-### Running Entry Points
+### Running the Dashboard & API
 
-Run scripts or servers using the python interpreter in the virtual environment:
+To explore the identified risk signals, start the FastAPI server:
 ```bash
-python path/to/script.py
+./.venv/bin/python src/api/main.py
+```
+*   **Web UI**: Access the interactive dashboard at [http://127.0.0.1:8000](http://127.0.0.1:8000).
+*   **API Docs**: View the Swagger/OpenAPI documentation at [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs).
+
+### Running the Analysis Pipeline
+
+If you have ingested new data and want to re-run the anomaly engines:
+```bash
+# Calculate peer group benchmarks
+./.venv/bin/python src/analysis/benchmarks.py
+
+# Run rule-based screening (Price, Volume, Concentration)
+./.venv/bin/python src/analysis/rules.py
+
+# Run ML anomaly detection (Isolation Forest)
+./.venv/bin/python src/analysis/models.py
 ```
 
 ### Deactivation
