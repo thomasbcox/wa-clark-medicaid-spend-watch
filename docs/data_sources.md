@@ -4,7 +4,7 @@
 - **Source:** [HHS Open Data Portal - Medicaid Provider Spending](https://opendata.hhs.gov/datasets/medicaid-provider-spending/)
 - **Content:** Provider-level spending by NPI × HCPCS code × month, covering 2018–2024
 - **Coverage:** Fee-for-service, managed care, and CHIP claims from T-MSIS
-- **Access:** Direct download from HHS (3.36 GB); also available in public BigQuery projects for easier querying
+- **Access:** Direct download from HHS (3.36 GB). **Note:** In v3.0, we use DuckDB's remote streaming to filter this dataset directly from the URL without local extraction.
 
 ## NPPES (National Plan and Provider Enumeration System)
 - **Source:** [CMS NPPES Public Download](https://download.cms.gov/nppes/NPI_Files.html)

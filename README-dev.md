@@ -42,9 +42,17 @@ To explore the identified risk signals, start the FastAPI server:
 *   **Web UI**: Access the interactive dashboard at [http://127.0.0.1:8000](http://127.0.0.1:8000).
 *   **API Docs**: View the Swagger/OpenAPI documentation at [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs).
 
-### Running the Analysis Pipeline
+### Running the Integrated Pipeline (Recommended)
 
-If you have ingested new data and want to re-run the anomaly engines:
+To fetch data, filter for your target county, and run all analytics in one command:
+```bash
+./.venv/bin/python src/pipeline.py
+```
+This is the preferred way to ensure all benchmarks and models are synchronized.
+
+### Running Individual Analysis Scripts
+
+If you need to re-run specific components:
 ```bash
 # Calculate peer group benchmarks
 ./.venv/bin/python src/analysis/benchmarks.py
@@ -55,6 +63,13 @@ If you have ingested new data and want to re-run the anomaly engines:
 # Run ML anomaly detection (Isolation Forest)
 ./.venv/bin/python src/analysis/models.py
 ```
+
+## Configuration
+
+All system settings, including the target county, data source URLs, and risk thresholds, are centralized in:
+**[src/config.py](file:///Users/thomasbcox/Projects/wa-clark-medicaid-spend-watch/src/config.py)**
+
+To port the project to a new county, simply update `TARGET_COUNTY` and `TARGET_STATE` in this file.
 
 ### Deactivation
 
