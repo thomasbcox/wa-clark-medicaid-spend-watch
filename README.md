@@ -1,15 +1,16 @@
-# 🔍 WA Medicaid Spend Watch v2.0 (Clark County)
+# 🔍 WA Medicaid Spend Watch v3.0 (Portable)
 
 An open-source, civic oversight platform designed to identify statistical anomalies and risk signals in Medicaid spending.
 
 ## 🚀 Key Features
+- **Integrated One-Click Pipeline**: Execute the entire Directed Acyclic Graph (DAG)—from NPI discovery to ML analysis—with a single command: `python src/pipeline.py`.
+- **High-Performance Ingestion**: Uses DuckDB remote streaming to filter multi-GB HHS datasets directly from the CMS zip file, removing disk-heavy extraction.
 - **Relational Data Model**: Powered by **DuckDB** for lightning-fast analytical queries over multi-gigabyte datasets.
 - **Enriched Provider Registry**: Combines CMS Medicaid spend data with **NPPES** metadata (Specialties, Names) and **OIG LEIE** exclusion lists.
 - **Anomaly Detection Engine**:
-  - **Peer Benchmarking**: Identifies outliers by comparing providers against their specific specialty peers.
-  - **Rule-Based Screening**: Detects extreme price deviations (e.g., >3x peer avg) and revenue concentration.
-  - **Unsupervised ML**: Uses **Isolation Forest** algorithms to surface multivariate outliers.
-- **Advanced Anomaly Rules**: Z-Score price detection, Pop-up utilization screening, and Volume-outlier mills.
+    - **Peer Benchmarking**: Identifies outliers by comparing providers against their specific specialty peers.
+    - **Rule-Based Screening**: Detects extreme price deviations (e.g., Z-score > 5), revenue concentration, and sudden utilization spikes.
+    - **Unsupervised ML**: Uses **Isolation Forest** algorithms to surface multivariate outliers.
 - **Provider Transparency**: Authorized official tracking and WA SOS research integration.
 - **Exploratory Dashboard**: A lightweight FastAPI + JS frontend for journalists and watchdogs to investigate risk signals.
 
@@ -31,7 +32,13 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 2. Run the Dashboard
+### 2. Integrated Pipeline (One-Click)
+To fetch data, filter for Clark County, and run all analytics:
+```bash
+./.venv/bin/python src/pipeline.py
+```
+
+### 3. Run the Dashboard
 ```bash
 ./.venv/bin/python src/api/main.py
 ```
