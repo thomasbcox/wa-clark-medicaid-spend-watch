@@ -16,3 +16,8 @@ networkx>=3.2
 # Notebook environment
 jupyter>=1.0.0
 ipykernel>=6.29.0
+
+# API and utilities
+requests>=2.31.0
+tqdm>=4.66.0
+
