@@ -9,6 +9,8 @@ An open-source, civic oversight platform designed to identify statistical anomal
   - **Peer Benchmarking**: Identifies outliers by comparing providers against their specific specialty peers.
   - **Rule-Based Screening**: Detects extreme price deviations (e.g., >3x peer avg) and revenue concentration.
   - **Unsupervised ML**: Uses **Isolation Forest** algorithms to surface multivariate outliers.
+- **Advanced Anomaly Rules**: Z-Score price detection, Pop-up utilization screening, and Volume-outlier mills.
+- **Provider Transparency**: Authorized official tracking and WA SOS research integration.
 - **Exploratory Dashboard**: A lightweight FastAPI + JS frontend for journalists and watchdogs to investigate risk signals.
 
 ## 🛠 Project Structure
@@ -17,7 +19,10 @@ An open-source, civic oversight platform designed to identify statistical anomal
 - `sql/`: Data schemas and relational mappings.
 - `web/`: Dashboard frontend.
 
-## 🏁 Getting Started
+## 🗺 Product Roadmap
+See our [ROADMAP.md](ROADMAP.md) for the planned evolution toward state-wide scalability and advanced investigative features.
+
+## 🚀 Getting Started
 
 ### 1. Environment Setup
 ```bash
