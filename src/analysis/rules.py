@@ -7,6 +7,7 @@ def screen_providers():
     conn = duckdb.connect(settings.DB_PATH)
     
     print("Screening providers against simple rules...")
+    conn.execute("DELETE FROM risk_flags")
     
     # 1. Price Outlier Screen (Z-score based)
     conn.execute("""
@@ -83,9 +84,54 @@ def screen_providers():
         JOIN benchmarks b ON p.taxonomy_desc = b.taxonomy_desc AND s.period = b.period AND s.hcpcs_code = b.hcpcs_code
         WHERE s.total_claims > ? * (b.total_peer_claims / b.peer_count)
           AND s.total_claims > ?
+          AND b.peer_count >= 5
     """, [settings.VOLUME_OUTLIER_MULTIPLIER, settings.MIN_VOLUME_CLAIMS])
-    
-    print(f"Risk screening complete. Flags generated: {conn.execute('SELECT COUNT(*) FROM risk_flags').fetchone()[0]}")
+
+    # 5. Dynamic Percentile Outlier Screen (Theme 2 Enhancement)
+    # Flag the top 1% of spenders within their specialty x code peer group
+    print("Running dynamic percentile screening...")
+    conn.execute("""
+        INSERT INTO risk_flags (npi, flag_type, flag_score, reason)
+        WITH peer_ranks AS (
+            SELECT 
+                s.billing_npi,
+                s.total_paid,
+                s.hcpcs_code,
+                p.taxonomy_desc,
+                PERCENT_RANK() OVER (PARTITION BY p.taxonomy_desc, s.period, s.hcpcs_code ORDER BY s.total_paid) as rank_pct
+            FROM medicaid_spend s
+            JOIN providers p ON s.billing_npi = p.npi
+        )
+        SELECT 
+            billing_npi,
+            'PERCENTILE_OUTLIER',
+            rank_pct,
+            'Statistical Persistence: This provider is in the top ' || 
+            ROUND((1 - rank_pct) * 100, 2) || '% of all ' || taxonomy_desc || 
+            ' providers for code ' || hcpcs_code || ' by total spend.'
+        FROM peer_ranks
+        WHERE rank_pct >= 0.99
+          AND total_paid > 50000 -- Floor to avoid low-value noise
+    """)
+
+    # 6. Claim Mill Detection (beneficiary ratio)
+    print("Running Claim Mill (Patient Ratio) screening...")
+    conn.execute("""
+        INSERT INTO risk_flags (npi, flag_type, flag_score, reason)
+        SELECT 
+            billing_npi,
+            'CLAIM_MILL_RATIO',
+            CAST(total_claims AS DOUBLE) / NULLIF(unique_beneficiaries, 0),
+            'Patient Density Risk: Billed ' || total_claims || ' claims to only ' || 
+            unique_beneficiaries || ' patients for code ' || hcpcs_code || 
+            ' (' || ROUND(CAST(total_claims AS DOUBLE) / NULLIF(unique_beneficiaries, 0), 1) || ' claims/patient)'
+        FROM medicaid_spend
+        WHERE unique_beneficiaries > 0 
+          AND (CAST(total_claims AS DOUBLE) / unique_beneficiaries) > 20 -- Arbitrary initial threshold for review
+          AND total_paid > 10000
+    """)
+
+    print(f"Risk screening complete. Total flags: {conn.execute('SELECT COUNT(*) FROM risk_flags').fetchone()[0]}")
     conn.close()
 
 if __name__ == "__main__":

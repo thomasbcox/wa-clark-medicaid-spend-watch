@@ -5,10 +5,10 @@ This roadmap outlines the evolution from a Clark County beta into a professional
 ## 🏗 Theme 1: Architecture & Portability
 *Goal: Remove hardcoding and enable one-click deployment for new counties/states.*
 
-- [ ] **Centralized Configuration**: Implement a `config/settings.py` layer to manage database paths, API keys, and target geographical scopes.
-- [ ] **Pipeline Orchestration**: Introduce a master `run_pipeline.py` or `Makefile` to define the Directed Acyclic Graph (DAG) for data ingestion and analysis.
-- [ ] **HHS Ingestion Efficiency**: Refactor ingestion to use DuckDB's remote CSV/Parquet streaming to filter NPIs directly from the CMS source without heavy local processing.
-- [ ] **Automated Testing**: Implement `pytest` suites to validate anomaly detection math and data parsing logic.
+- [x] **Centralized Configuration**: Implement a `src/config.py` layer to manage database paths and target scope.
+- [x] **Pipeline Orchestration**: Created `src/pipeline.py` to define the full Directed Acyclic Graph (DAG).
+- [x] **HHS Ingestion Efficiency**: Leveraged DuckDB remote CSV streaming to filter multi-GB sources instantly.
+- [x] **Automated Testing**: Integrated `pytest` suite to validate detection math.
 
 ## 🧠 Theme 2: Analytical Depth
 *Goal: Increase signal reliability and reduce false positives through statistical rigor.*

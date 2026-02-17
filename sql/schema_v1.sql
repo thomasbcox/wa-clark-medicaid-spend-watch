@@ -28,6 +28,8 @@ CREATE TABLE IF NOT EXISTS medicaid_spend (
     servicing_npi VARCHAR,
     hcpcs_code VARCHAR,
     period DATE,
+    state VARCHAR,
+    county VARCHAR,
     total_paid DOUBLE,
     total_claims INTEGER,
     unique_beneficiaries INTEGER,

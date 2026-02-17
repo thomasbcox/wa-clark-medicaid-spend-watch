@@ -7,8 +7,8 @@ class Settings(BaseSettings):
     DATA_DIR: Path = BASE_DIR / "data"
     DB_PATH: str = str(DATA_DIR / "processed" / "medicaid_watch.db")
     
-    # CMS / HHS Source (2024 Release)
-    HHS_SOURCE_URL: str = "https://data.cms.gov/provider-data/sites/default/files/archives/Medicaid%20Provider%20Spending/2024/medicaid_provider_spending_2024_06_27.zip"
+    # CMS / HHS Source (2026 Release)
+    HHS_SOURCE_URL: str = "https://stopendataprod.blob.core.windows.net/datasets/medicaid-provider-spending/2026-02-09/medicaid-provider-spending.csv"
     
     # Analysis Scope
     TARGET_COUNTY: str = "CLARK"
