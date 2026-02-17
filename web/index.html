@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicaid Spend Watch: Clark County</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-50 text-slate-900 font-[Inter]">
+    <nav class="bg-indigo-700 text-white p-4 shadow-lg">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold tracking-tight">🔍 WA Clark Medicaid Spend Watch <span class="text-indigo-200 text-sm ml-2">v2.0 Beta</span></h1>
+            <div class="text-sm bg-indigo-800 px-3 py-1 rounded-full border border-indigo-600">Civic Oversight Tool</div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto py-8 px-4">
+        <!-- Stats Row -->
+        <div id="stats-row" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <div class="text-slate-500 text-sm font-semibold uppercase tracking-wider mb-1">Total Analyzed Spend</div>
+                <div id="total-spend" class="text-3xl font-bold text-slate-800">$0</div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <div class="text-slate-500 text-sm font-semibold uppercase tracking-wider mb-1">Providers Monitored</div>
+                <div id="total-providers" class="text-3xl font-bold text-slate-800">0</div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <div class="text-slate-500 text-sm font-semibold uppercase tracking-wider mb-1">Risk Anomalies Found</div>
+                <div id="total-flags" class="text-3xl font-bold text-rose-600">0</div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Sidebar: Flagged Providers -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                        <h2 class="font-bold flex items-center">🚩 Highly Anomlous Providers</h2>
+                        <span class="text-xs text-slate-400">Top 20</span>
+                    </div>
+                    <div id="provider-list" class="divide-y divide-slate-100 max-h-[600px] overflow-y-auto">
+                        <!-- Items injected by JS -->
+                        <div class="p-8 text-center text-slate-400">Loading signals...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content: Provider Detail -->
+            <div class="lg:col-span-2">
+                <div id="detail-view" class="bg-white rounded-xl shadow-sm border border-slate-200 p-8 min-h-[600px] flex flex-col justify-center items-center text-slate-400">
+                    <div class="text-6xl mb-4">🩺</div>
+                    <p class="text-lg">Select a provider from the sidebar to view detailed anomaly signals and spending trends.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="container mx-auto py-8 border-t border-slate-200 mt-12 text-center text-slate-400 text-sm">
+        <p>This tool surfaces statistical anomalies for civic oversight. It does not prove fraud. Based on HHS MACFin public data.</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

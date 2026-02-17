@@ -20,4 +20,7 @@ ipykernel>=6.29.0
 # API and utilities
 requests>=2.31.0
 tqdm>=4.66.0
+fastapi>=0.110.0
+uvicorn>=0.27.0
+python-multipart>=0.0.9
 

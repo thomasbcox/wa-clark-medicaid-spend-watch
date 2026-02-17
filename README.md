@@ -1,18 +1,39 @@
-# wa-clark-medicaid-spend-watch
-Civic project exploring possibly anomalous Medicaid provider spending in Washington, starting with Clark County. Uses only public data, aims to inform oversight and media, not make legal determinations.
+# 🔍 WA Medicaid Spend Watch v2.0 (Clark County)
 
-## Current Status (Phase 1 Complete)
-We have successfully processed the 2018-2024 HHS Medicaid Provider Spending dataset for Clark County, WA.
+An open-source, civic oversight platform designed to identify statistical anomalies and risk signals in Medicaid spending.
 
-**Key Findings:**
-- **Total Clark County Medicaid Spend:** ~$909,471,032.89
-- **Unique Providers Identified:** 1,828
-- **Statistical Outliers:** 24 providers identified with spending > 3 standard deviations from the mean.
+## 🚀 Key Features
+- **Relational Data Model**: Powered by **DuckDB** for lightning-fast analytical queries over multi-gigabyte datasets.
+- **Enriched Provider Registry**: Combines CMS Medicaid spend data with **NPPES** metadata (Specialties, Names) and **OIG LEIE** exclusion lists.
+- **Anomaly Detection Engine**:
+  - **Peer Benchmarking**: Identifies outliers by comparing providers against their specific specialty peers.
+  - **Rule-Based Screening**: Detects extreme price deviations (e.g., >3x peer avg) and revenue concentration.
+  - **Unsupervised ML**: Uses **Isolation Forest** algorithms to surface multivariate outliers.
+- **Exploratory Dashboard**: A lightweight FastAPI + JS frontend for journalists and watchdogs to investigate risk signals.
 
-**Data Pipeline:**
-1. **NPI Identification**: Scraped [CMS NPPES API](scripts/get_clark_county_npis.py) for all NPIs associated with 25 Clark County zip codes.
-2. **Filtering**: Streamed the 3.36 GB HHS dataset to extract 1,010,363 relevant records using [filter_hhs_data.py](scripts/filter_hhs_data.py).
-3. **Initial Profiling**: Generated summary statistics in [reports/01-initial-clark-county-summary.md](reports/01-initial-clark-county-summary.md).
+## 🛠 Project Structure
+- `src/analysis/`: Anomaly detection engines (benchmarks, rules, ML models).
+- `src/ingestion/`: Ingestion pipelines for HHS, NPPES, and OIG LEIE data.
+- `sql/`: Data schemas and relational mappings.
+- `web/`: Dashboard frontend.
 
-## Getting Started
-See [README-dev.md](README-dev.md) for environment setup and data intake instructions.
+## 🏁 Getting Started
+
+### 1. Environment Setup
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+### 2. Run the Dashboard
+```bash
+./.venv/bin/python src/api/main.py
+```
+Open `http://127.0.0.1:8000` in your browser.
+
+## ⚖ Ethics & Intent
+This project surfaces **signals**, not proof of fraud. It is intended for civic oversight and to inform professional investigation. See [Ethics and Safeguards](docs/ethics_and_safeguards.md) for core principles.
+
+## 🤝 Contributing
+We welcome contributions to scale this beyond Clark County or to improve our anomaly models. See [CONTRIBUTING.md](CONTRIBUTING.md).
