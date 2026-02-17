@@ -1,15 +1,14 @@
 import duckdb
 import pandas as pd
 
-DB_PATH = "data/processed/medicaid_watch.db"
+from src.config import settings
 
 def screen_providers():
-    conn = duckdb.connect(DB_PATH)
+    conn = duckdb.connect(settings.DB_PATH)
     
     print("Screening providers against simple rules...")
     
     # 1. Price Outlier Screen (Z-score based)
-    # Flag providers charging > 5 standard deviations from the peer mean (High Confidence)
     conn.execute("""
         INSERT INTO risk_flags (npi, flag_type, flag_score, reason)
         SELECT 
@@ -20,10 +19,10 @@ def screen_providers():
         FROM medicaid_spend s
         JOIN providers p ON s.billing_npi = p.npi
         JOIN benchmarks b ON p.taxonomy_desc = b.taxonomy_desc AND s.period = b.period AND s.hcpcs_code = b.hcpcs_code
-        WHERE ((s.total_paid / NULLIF(s.total_claims, 0)) - b.avg_price_per_claim) > 5 * b.stddev_price_per_claim
+        WHERE ((s.total_paid / NULLIF(s.total_claims, 0)) - b.avg_price_per_claim) > ? * b.stddev_price_per_claim
           AND s.total_paid > 20000 
-          AND b.peer_count >= 3 -- Lowered but still requiring some peer comparison
-    """)
+          AND b.peer_count >= ?
+    """, [settings.Z_SCORE_THRESHOLD, settings.MIN_PEER_COUNT])
     
     # 2. Extreme Concentration Screen
     conn.execute("""
@@ -39,14 +38,13 @@ def screen_providers():
         FROM medicaid_spend s
         JOIN provider_totals pt ON s.billing_npi = pt.billing_npi
         JOIN providers p ON s.billing_npi = p.npi
-        WHERE (s.total_paid / pt.sum_paid) > 0.95
-          AND pt.sum_paid > 250000 -- Increased to $250k for high fidelity
+        WHERE (s.total_paid / pt.sum_paid) > ?
+          AND pt.sum_paid > ?
           AND p.taxonomy_desc NOT IN ('Ambulance', 'Clinical Medical Laboratory', 'End‑Stage Renal Disease (ESRD) Treatment Facility', 'Interpreter', 'Transportation Broker', 'Non-emergency Medical Transport (NEMT)')
           AND p.name NOT LIKE '%TRANSPORT%'
-    """)
+    """, [settings.EXTREME_CONCENTRATION_THRESHOLD, settings.MIN_CONCENTRATION_SPEND])
 
     # 3. New Entrant (Sudden Utilization) Screen
-    # Flag providers who bill > $1M in their first seen month (High Fidelity)
     conn.execute("""
         INSERT INTO risk_flags (npi, flag_type, flag_score, reason)
         WITH first_month AS (
@@ -60,11 +58,10 @@ def screen_providers():
             'Pop-up entity billing $' || ROUND(first_month_spend/1000000, 1) || 'M in their first recorded month (' || CAST(min_p AS VARCHAR) || ')'
         FROM first_month
         WHERE min_p > '2020-01-01'
-          AND first_month_spend > 1000000
-    """)
+          AND first_month_spend > ?
+    """, [settings.SUDDEN_UTILIZATION_LIMIT])
 
     # 4. Volume Outlier (Claim Mill) Screen
-    # Flag providers who bill > 10x the peer average number of claims for a specific code
     conn.execute("""
         INSERT INTO risk_flags (npi, flag_type, flag_score, reason)
         SELECT 
@@ -75,10 +72,10 @@ def screen_providers():
         FROM medicaid_spend s
         JOIN providers p ON s.billing_npi = p.npi
         JOIN benchmarks b ON p.taxonomy_desc = b.taxonomy_desc AND s.period = b.period AND s.hcpcs_code = b.hcpcs_code
-        WHERE s.total_claims > 10 * (b.total_peer_claims / b.peer_count)
-          AND s.total_claims > 500 -- Min volume to avoid small number noise
+        WHERE s.total_claims > ? * (b.total_peer_claims / b.peer_count)
+          AND s.total_claims > ?
           AND b.peer_count >= 5
-    """)
+    """, [settings.VOLUME_OUTLIER_MULTIPLIER, settings.MIN_VOLUME_CLAIMS])
 
     print(f"Risk screening complete. Flags generated: {conn.execute('SELECT COUNT(*) FROM risk_flags').fetchone()[0]}")
     conn.close()

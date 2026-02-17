@@ -6,11 +6,12 @@ from tqdm import tqdm
 import os
 
 LEIE_URL = "https://oig.hhs.gov/exclusions/downloadables/UPDATED.csv"
-DB_PATH = "data/processed/medicaid_watch.db"
-TMP_LEIE_CSV = "data/raw/leie_full.csv"
+from src.config import settings
+TMP_LEIE_CSV = str(settings.DATA_DIR / "raw" / "leie_full.csv")
 
 def main():
     print("Downloading OIG LEIE Exclusion List...")
+    # ... rest uses settings
     response = requests.get(LEIE_URL, stream=True)
     response.raise_for_status()
     
@@ -29,7 +30,7 @@ def main():
             bar.update(size)
 
     print("Loading LEIE into DuckDB...")
-    conn = duckdb.connect(DB_PATH)
+    conn = duckdb.connect(settings.DB_PATH)
     
     # Clean it up: Some NPIs might be 0 or empty in the CSV
     # LEIE has its own column names: LASTNAME, FIRSTNAME, MIDNAME, BUSNAME, GENERAL, SPECIALTY, UPIN, NPI, DOB, ADDRESS, CITY, STATE, ZIP, EXCLTYPE, EXCLDATE, REINDATE, WAIVERDATE, WVRSTATE

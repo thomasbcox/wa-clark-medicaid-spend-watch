@@ -14,10 +14,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-DB_PATH = os.path.join("data", "processed", "medicaid_watch.db")
+from src.config import settings
 
 def get_db():
-    return duckdb.connect(DB_PATH)
+    return duckdb.connect(settings.DB_PATH)
 
 @app.get("/api/summary")
 def get_summary():

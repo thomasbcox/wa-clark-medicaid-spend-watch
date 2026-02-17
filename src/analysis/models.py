@@ -3,10 +3,10 @@ import pandas as pd
 from sklearn.ensemble import IsolationForest
 import numpy as np
 
-DB_PATH = "data/processed/medicaid_watch.db"
+from src.config import settings
 
 def run_ml_analysis():
-    conn = duckdb.connect(DB_PATH)
+    conn = duckdb.connect(settings.DB_PATH)
     
     print("Preparing feature matrix for ML Anomaly Detection...")
     

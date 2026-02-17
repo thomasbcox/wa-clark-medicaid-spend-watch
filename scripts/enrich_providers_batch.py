@@ -4,7 +4,7 @@ import time
 from tqdm import tqdm
 
 NPPES_API_URL = "https://npiregistry.cms.hhs.gov/api/"
-DB_PATH = "data/processed/medicaid_watch.db"
+from src.config import settings
 
 def get_npi_details(npi):
     params = {"version": "2.1", "number": npi}
@@ -46,7 +46,7 @@ def get_npi_details(npi):
         return None
 
 def main(batch_size=100):
-    conn = duckdb.connect(DB_PATH)
+    conn = duckdb.connect(settings.DB_PATH)
     
     # Find NPIs that need enrichment (missing official data)
     # Prioritize flagged providers

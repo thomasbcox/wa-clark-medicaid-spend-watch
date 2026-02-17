@@ -1,10 +1,10 @@
 import duckdb
 import pandas as pd
 
-DB_PATH = "data/processed/medicaid_watch.db"
+from src.config import settings
 
 def calculate_benchmarks():
-    conn = duckdb.connect(DB_PATH)
+    conn = duckdb.connect(settings.DB_PATH)
     
     print("Calculating peer group benchmarks (Specialty x Month)...")
     

@@ -3,6 +3,9 @@ import json
 import time
 from tqdm import tqdm
 
+from src.config import settings
+
+# For portability, we should eventually move this to a zip lookup by County/State
 CLARK_COUNTY_ZIPS = [
     "98601", "98604", "98606", "98607", "98622", "98629", "98642", "98660",
     "98661", "98662", "98663", "98664", "98665", "98666", "98667", "98668",
