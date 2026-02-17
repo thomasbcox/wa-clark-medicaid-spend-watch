@@ -4,13 +4,13 @@ An open-source, civic oversight platform designed to identify statistical anomal
 
 ## 🚀 Key Features
 - **Integrated One-Click Pipeline**: Execute the entire Directed Acyclic Graph (DAG)—from NPI discovery to ML analysis—with a single command: `python src/pipeline.py`.
-- **High-Performance Ingestion**: Uses DuckDB remote streaming to filter multi-GB HHS datasets directly from the CMS zip file, removing disk-heavy extraction.
+- **Massive-Scale Ingestion**: Uses DuckDB remote streaming to filter **12.2 Million rows** of HHS spend data (2026 Release) directly from the CMS source.
 - **Relational Data Model**: Powered by **DuckDB** for lightning-fast analytical queries over multi-gigabyte datasets.
 - **Enriched Provider Registry**: Combines CMS Medicaid spend data with **NPPES** metadata (Specialties, Names) and **OIG LEIE** exclusion lists.
 - **Anomaly Detection Engine**:
-    - **Peer Benchmarking**: Identifies outliers by comparing providers against their specific specialty peers.
-    - **Rule-Based Screening**: Detects extreme price deviations (e.g., Z-score > 5), revenue concentration, and sudden utilization spikes.
-    - **Unsupervised ML**: Uses **Isolation Forest** algorithms to surface multivariate outliers.
+    - **Dynamic Benchmarking**: Identifies outliers by comparing providers against their specific specialty peers using **top 1% percentile ranks**.
+    - **Refined Screening**: Detects extreme price deviations, revenue concentration, and **Patient Density (Claim Mill)** patterns.
+    - **Temporal ML**: Uses **Isolation Forest** algorithms with month-over-month volatility features to surface refined anomalies.
 - **Provider Transparency**: Authorized official tracking and WA SOS research integration.
 - **Exploratory Dashboard**: A lightweight FastAPI + JS frontend for journalists and watchdogs to investigate risk signals.
 

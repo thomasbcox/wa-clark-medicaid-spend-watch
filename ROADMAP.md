@@ -13,9 +13,9 @@ This roadmap outlines the evolution from a Clark County beta into a professional
 ## 🧠 Theme 2: Analytical Depth
 *Goal: Increase signal reliability and reduce false positives through statistical rigor.*
 
-- [ ] **Dynamic Thresholding**: Move from "hardcoded dollars" to "distribution-based" flags (e.g., flagging the top 1% of outliers relative to the specific county population).
-- [ ] **HCPCS-Mix Clustering**: Cluster providers based on their procedure mix *before* benchmarking to ensure "Apples to Apples" peer comparison.
-- [ ] **Temporal Features**: Add month-over-month spend volatility and beneficiary-to-claim ratios to the Isolation Forest model.
+- [x] **Dynamic Thresholding**: Implemented `PERCENT_RANK()` based top 1% flags for intra-specialty comparison.
+- [x] **Claim-to-Beneficiary Ratios**: Added "Claim Mill" detection using patient density metrics.
+- [x] **Temporal Features**: Integrated `spend_volatility` and Growth metrics into a refined Isolation Forest model.
 
 ## 🖥 Theme 3: Investigative UX
 *Goal: Transform data points into actionable evidence for investigators.*
