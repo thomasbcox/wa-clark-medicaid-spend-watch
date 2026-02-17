@@ -11,22 +11,25 @@ def run_ml_analysis():
     print("Preparing feature matrix for ML Anomaly Detection...")
     
     # Feature Engineering at Provider level
-    # total_spend, avg_claims_per_month, unique_codes, avg_price_per_claim
+    # total_spend, active_months, unique_codes, avg_price_per_claim, avg_peer_price_ratio
     df = conn.execute("""
         SELECT 
-            billing_npi,
-            SUM(total_paid) as total_paid,
-            COUNT(DISTINCT period) as active_months,
-            COUNT(DISTINCT hcpcs_code) as unique_codes,
-            SUM(total_paid) / NULLIF(SUM(total_claims), 0) as avg_price_per_claim
-        FROM medicaid_spend
+            s.billing_npi,
+            SUM(s.total_paid) as total_paid,
+            COUNT(DISTINCT s.period) as active_months,
+            COUNT(DISTINCT s.hcpcs_code) as unique_codes,
+            SUM(s.total_paid) / NULLIF(SUM(s.total_claims), 0) as avg_price_per_claim,
+            AVG((s.total_paid / NULLIF(s.total_claims, 0)) / NULLIF(b.avg_price_per_claim, 0)) as avg_peer_price_ratio
+        FROM medicaid_spend s
+        JOIN providers p ON s.billing_npi = p.npi
+        JOIN benchmarks b ON p.taxonomy_desc = b.taxonomy_desc AND s.period = b.period AND s.hcpcs_code = b.hcpcs_code
         GROUP BY 1
     """).df()
     
     # Clean data (remove NaN)
     df = df.fillna(0)
     
-    features = ['total_paid', 'active_months', 'unique_codes', 'avg_price_per_claim']
+    features = ['total_paid', 'active_months', 'unique_codes', 'avg_price_per_claim', 'avg_peer_price_ratio']
     X = df[features]
     
     print(f"Training Isolation Forest on {len(df)} providers...")

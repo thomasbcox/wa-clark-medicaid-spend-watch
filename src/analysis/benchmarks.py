@@ -9,7 +9,7 @@ def calculate_benchmarks():
     print("Calculating peer group benchmarks (Specialty x Month)...")
     
     # We join spend and providers to get taxonomy
-    # Then calculate avg total_paid per claim for each (taxonomy_desc, period)
+    # Then calculate avg price, stddev, and count for each (taxonomy_desc, period, hcpcs_code)
     conn.execute("""
         CREATE OR REPLACE TABLE benchmarks AS
         SELECT 
@@ -17,6 +17,7 @@ def calculate_benchmarks():
             s.period,
             s.hcpcs_code,
             AVG(s.total_paid / NULLIF(s.total_claims, 0)) AS avg_price_per_claim,
+            STDDEV_SAMP(s.total_paid / NULLIF(s.total_claims, 0)) AS stddev_price_per_claim,
             SUM(s.total_claims) AS total_peer_claims,
             COUNT(DISTINCT s.billing_npi) AS peer_count
         FROM medicaid_spend s

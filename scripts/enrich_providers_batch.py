@@ -58,4 +58,6 @@ def main(batch_size=100):
     print("Batch enrichment complete.")
 
 if __name__ == "__main__":
-    main()
+    import sys
+    size = int(sys.argv[1]) if len(sys.argv) > 1 else 100
+    main(batch_size=size)
